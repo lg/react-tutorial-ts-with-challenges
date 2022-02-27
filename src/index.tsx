@@ -10,7 +10,7 @@ const Square: React.FC<React.ComponentProps<"button"> & { highlighted: boolean }
   )
 }
 
-class Board extends React.Component<React.ComponentProps<"div"> & { squares: string[] }> {
+class Board extends React.Component<React.ComponentProps<"div"> & { squares: string[], handleClick: (i: number) => void }> {
   renderSquare(i: number) {
     const winner = calculateWinner(this.props.squares)
 
@@ -19,7 +19,7 @@ class Board extends React.Component<React.ComponentProps<"div"> & { squares: str
         key={`square${i}`}
         value={this.props.squares[i]}
         highlighted={winner ? winner.indexOf(i) > -1 : false}
-        onClick={() => { this.props.onClick!(i as any) }}    // TODO: 'as any' is hacky
+        onClick={() => this.props.handleClick(i)}
       />
     )
   }
@@ -117,7 +117,7 @@ class Game extends React.Component<{}, GameState> {
         <div className="game-board">
           <Board
             squares={current.squares}
-            onClick={(i) => this.handleClick(i as any)}
+            handleClick={(i: number) => this.handleClick(i)}
           />
         </div>
         <div className="game-info">
