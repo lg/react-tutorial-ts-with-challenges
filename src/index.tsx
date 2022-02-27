@@ -111,6 +111,8 @@ class Game extends React.Component<{}, GameState> {
     let status = `Next player: ${this.state.xIsNext ? 'X' : 'O'}`
     if (winner)
       status = `Winner: ${current.squares[winner[0]]}`
+    if (this.state.stepNumber === 9)
+      status = `You both lost`
 
     return (
       <div className="game">
