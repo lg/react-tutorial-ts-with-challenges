@@ -65,13 +65,13 @@ class Game extends React.Component<{}, GameState> {
       return
     }
     squares[i] = this.state.xIsNext ? "X" : "O"
-    this.setState({
+    this.setState((state, props) => ({
       history: history.concat([{
         squares: squares
       }]),
       stepNumber: history.length,
-      xIsNext: !this.state.xIsNext
-    })
+      xIsNext: !state.xIsNext
+    }))
   }
 
   jumpTo(step: number) {
@@ -79,6 +79,12 @@ class Game extends React.Component<{}, GameState> {
       stepNumber: step,
       xIsNext: (step % 2) === 0
     })
+  }
+
+  toggleSort() {
+    this.setState((state, props) => ({
+      showHistoryAscending: !state.showHistoryAscending
+    }))
   }
 
   render() {
@@ -124,7 +130,7 @@ class Game extends React.Component<{}, GameState> {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <button onClick={() => { this.setState({ showHistoryAscending: !this.state.showHistoryAscending }) }}>
+          <button onClick={() => this.toggleSort()}>
             Change sort to {this.state.showHistoryAscending ? "descending" : "ascending"}
           </button>
           <ol>{sortedMoves}</ol>
