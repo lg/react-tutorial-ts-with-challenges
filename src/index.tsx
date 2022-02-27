@@ -2,9 +2,9 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import './index.css'
 
-const Square: React.FC<React.ComponentProps<"button">> = (props) => {
+const Square: React.FC<React.ComponentProps<"button"> & { highlighted: boolean }> = (props) => {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className={`square ${props.highlighted ? "highlight" : ""}`} onClick={props.onClick}>
       {props.value}
     </button>
   )
@@ -12,10 +12,13 @@ const Square: React.FC<React.ComponentProps<"button">> = (props) => {
 
 class Board extends React.Component<React.ComponentProps<"div"> & { squares: string[] }> {
   renderSquare(i: number) {
+    const winner = calculateWinner(this.props.squares)
+
     return (
       <Square
         key={`square${i}`}
         value={this.props.squares[i]}
+        highlighted={winner ? winner.indexOf(i) > -1 : false}
         onClick={() => { this.props.onClick!(i as any) }}    // TODO: 'as any' is hacky
       />
     )
@@ -106,9 +109,8 @@ class Game extends React.Component<{}, GameState> {
     const sortedMoves = this.state.showHistoryAscending ? moves : moves.reverse()
 
     let status = `Next player: ${this.state.xIsNext ? 'X' : 'O'}`
-    if (winner) {
-      status = `Winner: ${winner}`
-    }
+    if (winner)
+      status = `Winner: ${current.squares[winner[0]]}`
 
     return (
       <div className="game">
@@ -139,7 +141,7 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-function calculateWinner(squares: string[]): string | null {
+function calculateWinner(squares: string[]): number[] | null {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -153,7 +155,7 @@ function calculateWinner(squares: string[]): string | null {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i]
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a]
+      return lines[i]
     }
   }
   return null
